@@ -226,34 +226,48 @@ def scan(ticker, name):
 
 
 def fundamentals(ticker, name, price_date):
-    """Limited provider snapshot; missing estimates must stay missing."""
+    """Provider snapshot ONLY. No unverified figure is a fair-value estimate."""
     info = yf.Ticker(ticker).info or {}
+
     def number(key):
-        x = info.get(key)
         try:
-            v = float(x)
-            return round(v, 3) if math.isfinite(v) else None
-        except (TypeError, ValueError):
+            value = float(info.get(key))
+            return round(value, 4) if math.isfinite(value) else None
+        except (TypeError, ValueError, OverflowError):
             return None
-    p = number('forwardPE')
-    trailing = number('trailingPE')
-    pb = number('priceToBook')
+
+    forward_pe = number('forwardPE')
+    trailing_pe = number('trailingPE')
+    pbr = number('priceToBook')
     roe = number('returnOnEquity')
-    eg = number('earningsGrowth')
-    rg = number('revenueGrowth')
-    # Financial and insurance companies have different valuation conventions.
-    financial = ticker.split('.')[0] in {'055550','105560','086790','316140','138040','024110','175330','029780','000810','005830','001450','071050','006800','016360','039490'}
-    fields = [p, pb, roe, eg]
-    n = sum(x is not None for x in fields)
-    # Heuristic score used for sorting, not a target price or proof of undervaluation.
-    score = (25 if p is not None and 0 < p <= 10 else 12 if p is not None and p <= 18 and p > 0 else 0)
-    score += (15 if pb is not None and 0 < pb <= 1 else 8 if pb is not None and pb <= 2 and pb > 0 else 0)
-    score += (25 if roe is not None and roe >= .12 else 12 if roe is not None and roe >= .06 else 0)
-    score += (25 if eg is not None and eg >= .15 else 12 if eg is not None and eg > 0 else 0)
-    score += (10 if rg is not None and rg > 0 else 0)
-    return dict(ticker=ticker.split('.')[0],name=name,forward_pe=p,trailing_pe=trailing,pbr=pb,roe=roe,
-                earnings_growth=eg,revenue_growth=rg,available=n,score=score,
-                financial_sector=financial,price_date=price_date,source='Yahoo Finance/yfinance (지연·오류 가능)',
+    earnings_growth = number('earningsGrowth')
+    revenue_growth = number('revenueGrowth')
+    # Yahoo's earningsGrowth field does NOT establish the period or forward forecast.
+    # ForwardPE may be stale or have an inconsistent forecast period.
+    available = sum(v is not None for v in (forward_pe, trailing_pe, pbr, roe, earnings_growth))
+    notes = []
+    if forward_pe is None or forward_pe <= 0:
+        notes.append('예상 PER 없음 또는 무효')
+    if trailing_pe is None or trailing_pe <= 0:
+        notes.append('과거 PER 없음 또는 무효')
+    if pbr is None or pbr <= 0:
+        notes.append('PBR 미확인')
+    if roe is None:
+        notes.append('ROE 미확인')
+    if earnings_growth is None:
+        notes.append('이익증감 데이터 미확인')
+    if earnings_growth is not None and abs(earnings_growth) >= 1:
+        notes.append('이익증감 절댓값 100% 이상: 기준 기간 확인 필요')
+    if forward_pe is not None and (forward_pe < 3 or forward_pe > 80):
+        notes.append('예상 PER 극단값: 추정 실적 확인 필요')
+    notes.append('공시 대조·업종 비교·자료 기준 기간 미검증')
+    return dict(ticker=ticker.split('.')[0], name=name,
+                forward_pe=forward_pe, trailing_pe=trailing_pe, pbr=pbr,
+                roe=roe, earnings_growth=earnings_growth, revenue_growth=revenue_growth,
+                available=available, price_date=price_date,
+                source='Yahoo Finance/yfinance', status='VERIFY_PENDING',
+                status_label='평가 보류', notes=notes,
+                forecast_period='미확인', earnings_growth_period='미확인',
                 verified=False)
 
 
@@ -327,14 +341,14 @@ def main():
                 row=fundamentals(code, STOCKS[code], str(TODAY))
                 if row['available'] >= 3:
                     result['valuation_coverage']['sufficient'] += 1
-                    # Sub-sector PE comparability is not validated. This is only a watchlist.
-                    if row['forward_pe'] is not None and row['forward_pe'] > 0 and row['roe'] is not None and row['roe'] > 0:
-                        metrics.append(row)
+                    metrics.append(row)
             except Exception as exc:
                 result['valuation_coverage']['errors'] += 1
                 print('FUNDAMENTAL_ERROR',code,type(exc).__name__,str(exc)[:130])
-        metrics.sort(key=lambda r:(r['score'],r['available']),reverse=True)
+        # Data completeness order only; do NOT imply valuation ranking.
+        metrics.sort(key=lambda r:r['available'],reverse=True)
         result['value_candidates']=metrics[:5]
+        result['valuation_warning']='미검증 제공처 수치로는 저평가 여부를 판단할 수 없어 전체 평가 보류. 공시·컨센서스 출처별 대조가 필요합니다.'
 
         # If most of the universe failed to load, avoid showing a potentially misleading top pick.
         if diagnostics['data_ok'] < max(1, len(STOCKS)//2):
