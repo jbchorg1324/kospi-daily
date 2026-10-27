@@ -49,14 +49,15 @@ def round_tick(x, direction='nearest'):
 
 
 class ScanSkipped(Exception):
-    def __init__(self, category, reason):
+    def __init__(self, category, reason, observation=None):
         super().__init__(reason)
         self.category = category
         self.reason = reason
+        self.observation = observation
 
 
-def skip(category, reason):
-    raise ScanSkipped(category, reason)
+def skip(category, reason, observation=None):
+    raise ScanSkipped(category, reason, observation)
 
 
 def scan(ticker, name):
@@ -86,31 +87,43 @@ def scan(ticker, name):
     avgvol = float(df.Volume.iloc[-21:-1].mean())
     if not all(math.isfinite(v) for v in (close, vol, avgvol)) or close <= 0 or vol <= 0 or avgvol <= 0:
         skip('DATA_ERROR', '가격·거래량 값 오류')
-    if close < 2000 or close > CAPITAL:
-        skip('FILTERED', '주가가 분석 허용 범위 밖')
     ma5 = float(df.Close.tail(5).mean())
     ma20 = float(df.Close.tail(20).mean())
     ma50 = float(df.Close.tail(50).mean())
     prevclose = df.Close.shift(1)
     tr = pd.concat([df.High-df.Low, (df.High-prevclose).abs(), (df.Low-prevclose).abs()], axis=1).max(axis=1)
     atr = float(tr.tail(14).mean())
-    ratio = atr/close
-    if not math.isfinite(ratio) or not (.011 <= ratio <= .085):
-        skip('FILTERED', 'ATR 변동성 조건 미충족')
+    ratio = atr / close
     momentum5 = close/float(df.Close.iloc[-6])-1
     momentum20 = close/float(df.Close.iloc[-21])-1
-    if close < ma20 or ma5 < ma20 or momentum5 < -.02 or momentum20 < -.08 or momentum20 > .26:
-        skip('FILTERED', '이동평균·모멘텀 조건 미충족')
     relative_vol = vol/avgvol
-    if relative_vol < .55:
-        skip('FILTERED', '거래량 조건 미충족')
-    score = 2.0*(close/ma20-1)+1.4*momentum5+.6*momentum20+.018*min(relative_vol,2)+.02*(ma20/ma50-1)
+    if not all(math.isfinite(v) for v in (ma5,ma20,ma50,atr,ratio,momentum5,momentum20,relative_vol)):
+        skip('DATA_ERROR', '지표 계산 오류')
+    # 관찰 점수는 우선순위 표시용 규칙 점수일 뿐, 기대수익률이나 매수 확률이 아님.
+    score = (30 if close >= ma20 else 0) + (20 if ma5 >= ma20 else 0) + \
+            (15 if momentum5 >= -.02 else 0) + (15 if -.08 <= momentum20 <= .26 else 0) + \
+            (10 if relative_vol >= .55 else 0) + (10 if .011 <= ratio <= .085 else 0)
+    obs = dict(ticker=ticker.split('.')[0], name=name, date=str(dt), close=int(round(close)),
+               score=int(score), momentum5=round(momentum5*100,2),
+               volume_ratio=round(relative_vol,2), atr_percent=round(ratio*100,2),
+               status='WATCH', reason='')
+    fails=[]
+    if close < 2000 or close > CAPITAL: fails.append('주가가 분석 허용 범위 밖')
+    if not (.011 <= ratio <= .085): fails.append('ATR 변동성 조건 미충족')
+    if close < ma20 or ma5 < ma20 or momentum5 < -.02 or momentum20 < -.08 or momentum20 > .26:
+        fails.append('이동평균·모멘텀 조건 미충족')
+    if relative_vol < .55: fails.append('거래량 조건 미충족')
+    if fails:
+        obs['reason']=' / '.join(fails)
+        skip('FILTERED', fails[0], obs)
     entry = round_tick(close, 'nearest')
     target = round_tick(entry+max(1.4*atr,entry*.018), 'up')
     stop = round_tick(entry-max(1.0*atr,entry*.012), 'down')
     qty = int(CAPITAL//entry)
     if qty < 1 or stop <= 0 or target <= entry or stop >= entry:
-        skip('FILTERED', '매수가·목표가·손절가 조건 미충족')
+        skip('FILTERED', '매수가·목표가·손절가 조건 미충족', obs)
+    obs['status']='PASS'
+    obs['reason']='모든 필터 통과'
     return dict(ticker=ticker.split('.')[0], name=name, close=int(round(close)), date=str(dt),
                 entry=entry, target=target, stop=stop, qty=qty, cost=qty*entry,
                 cash=CAPITAL-qty*entry, profit=(target-entry)*qty, loss=(entry-stop)*qty,
@@ -120,7 +133,7 @@ def scan(ticker, name):
 
 
 def main():
-    result = dict(asof=NOW.strftime('%Y-%m-%d %H:%M KST'), date=str(TODAY),
+    result = dict(watchlist=[], asof=NOW.strftime('%Y-%m-%d %H:%M KST'), date=str(TODAY),
                   deadline=str(END_DATE), capital=CAPITAL, status='WAIT',
                   reason='데이터 검증 중', selection=None, alternatives=[],
                   method='전일 종가 기반 추세·거래량·ATR 필터. 추천은 거래 체결을 의미하지 않으며 장 시작 전 재확인 필요.')
@@ -132,6 +145,7 @@ def main():
         result.update(status='WAIT', reason='주말: 국내 주식시장 휴장')
     else:
         picks = []
+        watchlist = []
         reasons = Counter()
         for ticker, name in STOCKS.items():
             code = ticker.split('.')[0]
@@ -139,6 +153,7 @@ def main():
                 row = scan(ticker, name)
                 diagnostics['data_ok'] += 1
                 picks.append(row)
+                watchlist.append(dict(ticker=code, name=name, score=100, status='PASS', reason='모든 필터 통과',date=row['date'],close=row['close'],momentum5=row['momentum5'],volume_ratio=row['volume_ratio'],atr_percent=row['atr_percent']))
                 print(f'PASS {code} {name}')
             except ScanSkipped as exc:
                 if exc.category == 'DATA_ERROR':
@@ -147,6 +162,7 @@ def main():
                     diagnostics['data_ok'] += 1
                     diagnostics['filtered'] += 1
                 reasons[exc.reason] += 1
+                if exc.observation is not None: watchlist.append(exc.observation)
                 diagnostics['details'].append(dict(ticker=code, name=name, status=exc.category, reason=exc.reason))
                 print(f'{exc.category} {code} {name}: {exc.reason}')
             except Exception as exc:
@@ -155,6 +171,9 @@ def main():
                 reasons[why] += 1
                 diagnostics['details'].append(dict(ticker=code, name=name, status='DATA_ERROR', reason=why))
                 print(f'DATA_ERROR {code} {name}: {why}')
+        # 데이터 정상 종목 중 관찰 점수 상위 3개를 매수 추천과 별개로 공개
+        watchlist.sort(key=lambda x:(x['score'], x['momentum5']), reverse=True)
+        result['watchlist'] = watchlist[:3]
         diagnostics['candidates'] = len(picks)
         diagnostics['reasons'] = dict(reasons)
         picks.sort(key=lambda x: x['score'], reverse=True)
