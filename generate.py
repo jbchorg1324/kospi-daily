@@ -1,6 +1,7 @@
 import json
 import math
 from collections import Counter
+import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from pathlib import Path
@@ -223,8 +224,41 @@ def scan(ticker, name):
                 reason=f'전일 종가가 20일 이동평균선 위, 최근 5일 수익률 {momentum5*100:+.1f}%, 거래량/20일 평균 {relative_vol:.2f}배')
 
 
+
+def fundamentals(ticker, name, price_date):
+    """Limited provider snapshot; missing estimates must stay missing."""
+    info = yf.Ticker(ticker).info or {}
+    def number(key):
+        x = info.get(key)
+        try:
+            v = float(x)
+            return round(v, 3) if math.isfinite(v) else None
+        except (TypeError, ValueError):
+            return None
+    p = number('forwardPE')
+    trailing = number('trailingPE')
+    pb = number('priceToBook')
+    roe = number('returnOnEquity')
+    eg = number('earningsGrowth')
+    rg = number('revenueGrowth')
+    # Financial and insurance companies have different valuation conventions.
+    financial = ticker.split('.')[0] in {'055550','105560','086790','316140','138040','024110','175330','029780','000810','005830','001450','071050','006800','016360','039490'}
+    fields = [p, pb, roe, eg]
+    n = sum(x is not None for x in fields)
+    # Heuristic score used for sorting, not a target price or proof of undervaluation.
+    score = (25 if p is not None and 0 < p <= 10 else 12 if p is not None and p <= 18 and p > 0 else 0)
+    score += (15 if pb is not None and 0 < pb <= 1 else 8 if pb is not None and pb <= 2 and pb > 0 else 0)
+    score += (25 if roe is not None and roe >= .12 else 12 if roe is not None and roe >= .06 else 0)
+    score += (25 if eg is not None and eg >= .15 else 12 if eg is not None and eg > 0 else 0)
+    score += (10 if rg is not None and rg > 0 else 0)
+    return dict(ticker=ticker.split('.')[0],name=name,forward_pe=p,trailing_pe=trailing,pbr=pb,roe=roe,
+                earnings_growth=eg,revenue_growth=rg,available=n,score=score,
+                financial_sector=financial,price_date=price_date,source='Yahoo Finance/yfinance (지연·오류 가능)',
+                verified=False)
+
+
 def main():
-    result = dict(watchlist=[], asof=NOW.strftime('%Y-%m-%d %H:%M KST'), date=str(TODAY),
+    result = dict(watchlist=[], short_term=[], value_candidates=[], valuation_coverage={'checked':0,'sufficient':0,'errors':0}, asof=NOW.strftime('%Y-%m-%d %H:%M KST'), date=str(TODAY),
                   deadline=str(END_DATE), capital=CAPITAL, status='WAIT',
                   reason='데이터 검증 중', selection=None, alternatives=[],
                   method='사전 지정한 코스피 100종목 대상 전일 종가 기반 추세·거래량·ATR 필터. 실시간 시세·거래대금 순위 아님. 거래 전 확인 필요.')
@@ -262,20 +296,54 @@ def main():
                 reasons[why] += 1
                 diagnostics['details'].append(dict(ticker=code, name=name, status='DATA_ERROR', reason=why))
                 print(f'DATA_ERROR {code} {name}: {why}')
-        # 데이터 정상 종목 중 관찰 점수 상위 3개를 매수 추천과 별개로 공개
+        # 관찰 목록은 이미 통과한 종목이 아닌 제외 종목 중 상위 3개
         watchlist.sort(key=lambda x:(x['score'], x['momentum5']), reverse=True)
-        result['watchlist'] = watchlist[:3]
+        result['watchlist'] = [x for x in watchlist if x['status'] != 'PASS'][:3]
         diagnostics['candidates'] = len(picks)
         diagnostics['reasons'] = dict(reasons)
-        picks.sort(key=lambda x: x['score'], reverse=True)
+        picks.sort(key=lambda x:(x['score'], x['momentum5'], x['volume_ratio']), reverse=True)
+        # Risk cap: at most 1% of starting capital at the indicated stop, and 50% deployed in one name.
+        for p in picks:
+            risk_per_share = p['entry'] - p['stop']
+            qty = min(CAPITAL // p['entry'], (CAPITAL // 2) // p['entry'],
+                      int((CAPITAL * .01) // risk_per_share)) if risk_per_share > 0 else 0
+            p.update(qty=int(qty), cost=int(qty * p['entry']), cash=int(CAPITAL-qty*p['entry']),
+                     profit=int((p['target']-p['entry'])*qty),loss=int(risk_per_share*qty))
+        actionable = [p for p in picks if p['qty'] > 0]
+        result['short_term'] = [{k:v for k,v in p.items() if k != 'score'} for p in actionable[:3]]
+        # Limit slow fundamental requests to a disclosed subset. No fake metrics or forecasts.
+        # Mix the most promising technical names with a fixed financial/value baseline.
+        screened = [r['ticker']+'.KS' for r in watchlist[:15]]
+        screened += ['005930.KS','000660.KS','005380.KS','000270.KS','105560.KS',
+                     '055550.KS','086790.KS','316140.KS','024110.KS','005490.KS']
+        seen=set(); universe=[]
+        for code in screened:
+            if code in STOCKS and code not in seen:
+                seen.add(code); universe.append(code)
+        metrics=[]
+        for code in universe[:25]:
+            result['valuation_coverage']['checked'] += 1
+            try:
+                row=fundamentals(code, STOCKS[code], str(TODAY))
+                if row['available'] >= 3:
+                    result['valuation_coverage']['sufficient'] += 1
+                    # Sub-sector PE comparability is not validated. This is only a watchlist.
+                    if row['forward_pe'] is not None and row['forward_pe'] > 0 and row['roe'] is not None and row['roe'] > 0:
+                        metrics.append(row)
+            except Exception as exc:
+                result['valuation_coverage']['errors'] += 1
+                print('FUNDAMENTAL_ERROR',code,type(exc).__name__,str(exc)[:130])
+        metrics.sort(key=lambda r:(r['score'],r['available']),reverse=True)
+        result['value_candidates']=metrics[:5]
+
         # If most of the universe failed to load, avoid showing a potentially misleading top pick.
         if diagnostics['data_ok'] < max(1, len(STOCKS)//2):
             result.update(status='DATA_ERROR', reason=f'주가 데이터 정상 조회 {diagnostics["data_ok"]}/{len(STOCKS)}개. 데이터 부족으로 추천 중단.')
-        elif picks:
+        elif actionable:
             for p in picks:
                 p.pop('score', None)
             result.update(status='CANDIDATE', reason='전일 종가 기준 조건을 통과한 종목 중 상위 1개',
-                          selection=picks[0], alternatives=picks[1:4])
+                          selection=actionable[0], alternatives=actionable[1:4])
         else:
             result.update(status='WAIT', reason=f'{diagnostics["data_ok"]}개 종목의 데이터를 확인했으나 매수 조건을 통과한 종목이 없습니다.')
     result['diagnostics'] = diagnostics
