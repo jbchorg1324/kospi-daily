@@ -1,7 +1,6 @@
 name: Daily KOSPI screen and deploy
 on:
   schedule:
-    # UTC Sunday-Thursday 23:30 = Korea Monday-Friday 08:30
     - cron: '30 23 * * 0-4'
   workflow_dispatch:
   push:
@@ -27,6 +26,10 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: python generate.py
+      - name: Fetch official DART annual statements
+        env:
+          DART_API_KEY: ${{ secrets.DART_API_KEY }}
+        run: python dart_financial.py
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
