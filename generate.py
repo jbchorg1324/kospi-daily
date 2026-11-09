@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parent
 TZ = ZoneInfo('Asia/Seoul')
 NOW = datetime.now(TZ)
 TODAY = NOW.date()
-END_DATE = datetime(2026, 12, 31, tzinfo=TZ).date()
+END_DATE = datetime(2030, 12, 31, tzinfo=TZ).date()
 CAPITAL = 1_000_000
 STOCKS = {
     '005930.KS': '삼성전자',
