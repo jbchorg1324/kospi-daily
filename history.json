@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "records": [
+    {
+      "signal_date": "2026-11-17",
+      "rank": 1,
+      "ticker": "009420",
+      "name": "한올바이오파마",
+      "reference_date": "2026-11-16",
+      "reference_close": 50800.0,
+      "suggested_entry": 50800,
+      "target": 55300,
+      "stop": 47550,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-17",
+      "rank": 2,
+      "ticker": "280360",
+      "name": "롯데웰푸드",
+      "reference_date": "2026-11-16",
+      "reference_close": 137500.0,
+      "suggested_entry": 137500,
+      "target": 147100,
+      "stop": 130600,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-17",
+      "rank": 3,
+      "ticker": "086790",
+      "name": "하나금융지주",
+      "reference_date": "2026-11-16",
+      "reference_close": 126800.0,
+      "suggested_entry": 126800,
+      "target": 133400,
+      "stop": 122100,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    }
+  ],
+  "updated_at": "2026-11-17T15:25:21.105580+09:00"
+}
