@@ -1,17 +1,21 @@
 name: Daily KOSPI screen and deploy
+
 on:
   schedule:
-    - cron: '30 23 * * 0-4'
+    - cron: '30 23 * * 0-4' # 08:30 KST Mon-Fri (UTC Sun-Thu)
   workflow_dispatch:
   push:
     branches: [main]
+
 permissions:
   contents: write
   pages: write
   id-token: write
+
 concurrency:
   group: pages
   cancel-in-progress: true
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -21,13 +25,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python generate.py
+      - name: Generate current screen
+        run: python generate.py
       - name: Fetch official DART annual statements
         env:
           DART_API_KEY: ${{ secrets.DART_API_KEY }}
@@ -40,8 +45,10 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history.json performance.json
           if ! git diff --cached --quiet; then
-            git commit -m "Update signal performance history [skip ci]"
+            git commit -m "Update KOSPI tracking data [skip ci]"
             git push origin HEAD:main
+          else
+            echo "No changes to tracking data"
           fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
