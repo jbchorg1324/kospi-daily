@@ -39,7 +39,46 @@
       "stop": 122100,
       "horizons": {},
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-18",
+      "rank": 1,
+      "ticker": "069960",
+      "name": "현대백화점",
+      "reference_date": "2026-11-17",
+      "reference_close": 96400.0,
+      "suggested_entry": 96400,
+      "target": 103600,
+      "stop": 91200,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-18",
+      "rank": 2,
+      "ticker": "280360",
+      "name": "롯데웰푸드",
+      "reference_date": "2026-11-17",
+      "reference_close": 134900.0,
+      "suggested_entry": 134900,
+      "target": 144700,
+      "stop": 127900,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-18",
+      "rank": 3,
+      "ticker": "000100",
+      "name": "유한양행",
+      "reference_date": "2026-11-17",
+      "reference_close": 83200.0,
+      "suggested_entry": 83200,
+      "target": 88000,
+      "stop": 79800,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     }
   ],
-  "updated_at": "2026-11-17T15:38:28.144498+09:00"
+  "updated_at": "2026-11-18T09:18:33.400326+09:00"
 }
