@@ -11,7 +11,13 @@
       "suggested_entry": 50800,
       "target": 55300,
       "stop": 47550,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-18",
+          "close": 52300.0,
+          "return_pct": 2.953
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -24,7 +30,13 @@
       "suggested_entry": 137500,
       "target": 147100,
       "stop": 130600,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-18",
+          "close": 139200.0,
+          "return_pct": 1.236
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -37,7 +49,13 @@
       "suggested_entry": 126800,
       "target": 133400,
       "stop": 122100,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-18",
+          "close": 124200.0,
+          "return_pct": -2.05
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -78,7 +96,46 @@
       "stop": 79800,
       "horizons": {},
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-19",
+      "rank": 1,
+      "ticker": "280360",
+      "name": "롯데웰푸드",
+      "reference_date": "2026-11-18",
+      "reference_close": 139200.0,
+      "suggested_entry": 139200,
+      "target": 149600,
+      "stop": 131800,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-19",
+      "rank": 2,
+      "ticker": "069960",
+      "name": "현대백화점",
+      "reference_date": "2026-11-18",
+      "reference_close": 95600.0,
+      "suggested_entry": 95600,
+      "target": 103000,
+      "stop": 90300,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-19",
+      "rank": 3,
+      "ticker": "036460",
+      "name": "한국가스공사",
+      "reference_date": "2026-11-18",
+      "reference_close": 38400.0,
+      "suggested_entry": 38400,
+      "target": 39900,
+      "stop": 37300,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     }
   ],
-  "updated_at": "2026-11-18T09:18:33.400326+09:00"
+  "updated_at": "2026-11-19T09:15:53.414963+09:00"
 }
