@@ -182,7 +182,13 @@
       "suggested_entry": 142500,
       "target": 151500,
       "stop": 136100,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-23",
+          "close": 135800.0,
+          "return_pct": -4.702
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -195,7 +201,13 @@
       "suggested_entry": 38550,
       "target": 40650,
       "stop": 37050,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-23",
+          "close": 36800.0,
+          "return_pct": -4.54
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -208,7 +220,13 @@
       "suggested_entry": 139400,
       "target": 150000,
       "stop": 131800,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-23",
+          "close": 137000.0,
+          "return_pct": -1.722
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -249,7 +267,46 @@
       "stop": 36300,
       "horizons": {},
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-24",
+      "rank": 1,
+      "ticker": "161890",
+      "name": "한국콜마",
+      "reference_date": "2026-11-23",
+      "reference_close": 116000.0,
+      "suggested_entry": 116000,
+      "target": 128000,
+      "stop": 107400,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-24",
+      "rank": 2,
+      "ticker": "090430",
+      "name": "아모레퍼시픽",
+      "reference_date": "2026-11-23",
+      "reference_close": 135800.0,
+      "suggested_entry": 135800,
+      "target": 144500,
+      "stop": 129600,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-24",
+      "rank": 3,
+      "ticker": "008770",
+      "name": "호텔신라",
+      "reference_date": "2026-11-23",
+      "reference_close": 36800.0,
+      "suggested_entry": 36800,
+      "target": 38850,
+      "stop": 35300,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     }
   ],
-  "updated_at": "2026-11-23T09:11:30.256300+09:00"
+  "updated_at": "2026-11-24T09:18:11.394772+09:00"
 }
