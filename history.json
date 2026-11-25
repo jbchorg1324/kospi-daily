@@ -16,6 +16,11 @@
           "date": "2026-11-18",
           "close": 52300.0,
           "return_pct": 2.953
+        },
+        "5": {
+          "date": "2026-11-24",
+          "close": 52400.0,
+          "return_pct": 3.15
         }
       },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
@@ -35,6 +40,11 @@
           "date": "2026-11-18",
           "close": 139200.0,
           "return_pct": 1.236
+        },
+        "5": {
+          "date": "2026-11-24",
+          "close": 129400.0,
+          "return_pct": -5.891
         }
       },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
@@ -54,6 +64,11 @@
           "date": "2026-11-18",
           "close": 124200.0,
           "return_pct": -2.05
+        },
+        "5": {
+          "date": "2026-11-24",
+          "close": 123100.0,
+          "return_pct": -2.918
         }
       },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
@@ -239,7 +254,13 @@
       "suggested_entry": 142500,
       "target": 153300,
       "stop": 134800,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-24",
+          "close": 129400.0,
+          "return_pct": -9.193
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -252,7 +273,13 @@
       "suggested_entry": 139400,
       "target": 148100,
       "stop": 133200,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-24",
+          "close": 139800.0,
+          "return_pct": 0.287
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -265,7 +292,13 @@
       "suggested_entry": 37800,
       "target": 39850,
       "stop": 36300,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-24",
+          "close": 38050.0,
+          "return_pct": 0.661
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -306,7 +339,46 @@
       "stop": 35300,
       "horizons": {},
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-25",
+      "rank": 1,
+      "ticker": "161890",
+      "name": "한국콜마",
+      "reference_date": "2026-11-24",
+      "reference_close": 121400.0,
+      "suggested_entry": 121400,
+      "target": 133400,
+      "stop": 112800,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-25",
+      "rank": 2,
+      "ticker": "008770",
+      "name": "호텔신라",
+      "reference_date": "2026-11-24",
+      "reference_close": 38050.0,
+      "suggested_entry": 38050,
+      "target": 40100,
+      "stop": 36600,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-25",
+      "rank": 3,
+      "ticker": "090430",
+      "name": "아모레퍼시픽",
+      "reference_date": "2026-11-24",
+      "reference_close": 139800.0,
+      "suggested_entry": 139800,
+      "target": 148300,
+      "stop": 133700,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     }
   ],
-  "updated_at": "2026-11-24T09:18:11.394772+09:00"
+  "updated_at": "2026-11-25T09:15:16.500405+09:00"
 }
