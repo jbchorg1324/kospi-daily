@@ -1,17 +1,17 @@
 {
-  "updated_at": "2026-11-26T09:18:19.673422+09:00",
-  "total_signals": 24,
+  "updated_at": "2026-11-27T09:25:46.736648+09:00",
+  "total_signals": 27,
   "new_signals": 3,
   "stats": {
     "1": {
-      "evaluated": 18,
-      "average_return_pct": 0.712,
-      "positive_rate_pct": 61.1
+      "evaluated": 21,
+      "average_return_pct": 1.297,
+      "positive_rate_pct": 66.7
     },
     "5": {
-      "evaluated": 6,
-      "average_return_pct": -1.827,
-      "positive_rate_pct": 33.3
+      "evaluated": 9,
+      "average_return_pct": -3.205,
+      "positive_rate_pct": 22.2
     },
     "20": {
       "evaluated": 0,
@@ -20,6 +20,45 @@
     }
   },
   "recent": [
+    {
+      "signal_date": "2026-11-27",
+      "rank": 3,
+      "ticker": "002790",
+      "name": "아모레G",
+      "reference_date": "2026-11-26",
+      "reference_close": 29050.0,
+      "suggested_entry": 29050,
+      "target": 30550,
+      "stop": 28000,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-27",
+      "rank": 2,
+      "ticker": "001040",
+      "name": "CJ",
+      "reference_date": "2026-11-26",
+      "reference_close": 125000.0,
+      "suggested_entry": 125000,
+      "target": 133100,
+      "stop": 119200,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
+    {
+      "signal_date": "2026-11-27",
+      "rank": 1,
+      "ticker": "161890",
+      "name": "한국콜마",
+      "reference_date": "2026-11-26",
+      "reference_close": 131200.0,
+      "suggested_entry": 131200,
+      "target": 141700,
+      "stop": 123700,
+      "horizons": {},
+      "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
+    },
     {
       "signal_date": "2026-11-26",
       "rank": 3,
@@ -69,7 +108,13 @@
       "suggested_entry": 139800,
       "target": 148300,
       "stop": 133700,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-26",
+          "close": 146100.0,
+          "return_pct": 4.506
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -82,7 +127,13 @@
       "suggested_entry": 38050,
       "target": 40100,
       "stop": 36600,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-26",
+          "close": 38750.0,
+          "return_pct": 1.84
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -95,7 +146,13 @@
       "suggested_entry": 121400,
       "target": 133400,
       "stop": 112800,
-      "horizons": {},
+      "horizons": {
+        "1": {
+          "date": "2026-11-26",
+          "close": 131200.0,
+          "return_pct": 8.072
+        }
+      },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
     },
     {
@@ -284,6 +341,11 @@
           "date": "2026-11-20",
           "close": 37500.0,
           "return_pct": -2.344
+        },
+        "5": {
+          "date": "2026-11-26",
+          "close": 35650.0,
+          "return_pct": -7.161
         }
       },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
@@ -303,6 +365,11 @@
           "date": "2026-11-20",
           "close": 98300.0,
           "return_pct": 2.824
+        },
+        "5": {
+          "date": "2026-11-26",
+          "close": 89400.0,
+          "return_pct": -6.485
         }
       },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
@@ -322,6 +389,11 @@
           "date": "2026-11-20",
           "close": 142500.0,
           "return_pct": 2.371
+        },
+        "5": {
+          "date": "2026-11-26",
+          "close": 133300.0,
+          "return_pct": -4.239
         }
       },
       "tracking_note": "추천 생성일 이후 1/5/20거래일 종가 변화. 매매 체결 결과 아님."
